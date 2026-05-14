@@ -1,0 +1,7 @@
+name = "the-button"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+
+[[kv_namespaces]]
+binding = "BLOCKED_IPS"
+id = "34d5fd6c80854e85a637ac47608e210f"
