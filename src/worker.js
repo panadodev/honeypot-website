@@ -272,13 +272,18 @@ export default {
         expirationTtl: 60 * 60 * 24,
       });
       return new Response(JSON.stringify({ blocked: true }), {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Set-Cookie": "pressed=true; Path=/; Max-Age=86400; SameSite=Strict; HttpOnly",
+        },
       });
     }
 
     // ── GET /  →  serve the page ────────────────────────────────────────────
     if (request.method === "GET" && url.pathname === "/") {
-      const isBlocked = await env.BLOCKED_IPS.get(kvKey);
+      const cookieHeader = request.headers.get("Cookie") || "";
+      const hasCookie = /(?:^|;\s*)pressed=true(?:;|$)/.test(cookieHeader);
+      const isBlocked = hasCookie || await env.BLOCKED_IPS.get(kvKey);
       const status = isBlocked ? "blocked" : "ok";
 
       return new Response(HTML(status), {
